@@ -166,6 +166,7 @@ export class EvolutionStartupService extends ChannelStartupService {
           remoteJid: messageRaw.key.remoteJid,
           pushName: messageRaw.pushName,
           profilePicUrl: received.profilePicUrl,
+          fromMe: received.key.fromMe,
         });
       }
     } catch (error) {
@@ -173,7 +174,7 @@ export class EvolutionStartupService extends ChannelStartupService {
     }
   }
 
-  private async updateContact(data: { remoteJid: string; pushName?: string; profilePicUrl?: string }) {
+  private async updateContact(data: { remoteJid: string; pushName?: string; profilePicUrl?: string, fromMe?: boolean }) {
     const contact = await this.prismaRepository.contact.findFirst({
       where: { instanceId: this.instanceId, remoteJid: data.remoteJid },
     });
@@ -184,6 +185,7 @@ export class EvolutionStartupService extends ChannelStartupService {
         pushName: data?.pushName,
         instanceId: this.instanceId,
         profilePicUrl: data?.profilePicUrl,
+        fromMe: data?.fromMe
       };
 
       this.sendDataWebhook(Events.CONTACTS_UPDATE, contactRaw);
@@ -208,6 +210,7 @@ export class EvolutionStartupService extends ChannelStartupService {
       pushName: data?.pushName,
       instanceId: this.instanceId,
       profilePicUrl: data?.profilePicUrl,
+      fromMe: data?.fromMe
     };
 
     this.sendDataWebhook(Events.CONTACTS_UPSERT, contactRaw);
